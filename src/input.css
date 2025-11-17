@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+    --color-white: #ffffff;
+    --color-accent: #f9b17a;
+    --color-slateLight: #676f9d;
+    --color-slateMid: #424769;
+    --color-slateDeep: #2d3250;
+    --font-raleway: "Raleway", sans-serif;
+    --font-weight-regular: 400;
+    --font-weight-semibold: 600;
+    --container-xs: 20rem;
+    --container-sm: 24rem;
+    --container-md: 28rem;
+    --spacing-1: 0.25rem;
+    --spacing-2: 0.5rem;
+    --spacing-3: 0.75rem;
+}
+
+.room {
+    @apply flex items-center justify-center text-center bg-slateMid text-white font-semibold border border-slateDeep rounded-lg text-lg relative;
+}
+
+.plus-btn {
+    @apply absolute bottom-1 w-6 h-6 flex items-center justify-center bg-accent text-slateDeep rounded-md text-lg leading-none hover:bg-accent/80 transition;
+}
