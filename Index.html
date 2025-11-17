@@ -26,6 +26,7 @@
 
 
     <main class="flex min-h-[calc(100vh-64px)]">
+        <!-- Sidebar -->
         <aside id="sideBar" class="hidden bg-slateMid w-64 flex-col p-4 shadow-md">
             <h2 class="text-xl font-semibold text-accent mb-2">Search</h2>
             <div class="relative mb-2">
@@ -36,6 +37,7 @@
 
             </div>
         </aside>
+        <!-- buttons to show or hide the sidebar -->
         <div class="flex flex-col justify-center">
             <button id="hideSideBarBtn" class="hidden w-fit h-full p-2 bg-accent rounded hover:bg-accent/80 transition">
                 <svg class="w-6 h-6 text-slateDeep" fill="none" stroke="currentColor" stroke-width="2"
@@ -51,6 +53,7 @@
                 </svg>
             </button>
         </div>
+        <!-- the grid layout for the rooms -->
         <div class="flex-1 p-6 ">
             <div class="grid grid-cols-5 grid-rows-5 sm:grid-cols-10 sm:grid-rows-7 gap-1 w-full h-full p-2">
 
