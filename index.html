@@ -27,13 +27,15 @@
 
     <main class="flex min-h-[calc(100vh-64px)]">
         <!-- Sidebar -->
-        <aside id="sideBar" class="hidden bg-slateMid w-64 flex-col p-4 shadow-md">
+        <aside id="sideBar" class=" bg-slateMid w-64 flex-col p-4 shadow-md">
             <h2 class="text-xl font-semibold text-accent mb-2">Search</h2>
             <div class="relative mb-2">
                 <input type="text" placeholder="Search For Employee"
                     class="w-full text-[0.75rem] p-2 rounded-lg bg-slateDeep text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-accent">
             </div>
             <div id="employeeList" class="relative mb-2">
+                <div class="w-full h-17 rounded-2xl bg-slateDeep">
+                </div>
 
             </div>
         </aside>
@@ -52,6 +54,82 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
                 </svg>
             </button>
+        </div>
+        <!--                 Adding a Employee modal
+ -->
+        <div id="addEmployeeBtn"
+            class="fixed inset-0 overflow-hidden bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+
+            <div
+                class="bg-slateMid p-6 rounded-lg h-[80vh] w-[800px] flex flex-row gap-6 shadow-xl border border-slateDeep">
+
+                <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                    <h2 class="text-accent font-semibold text-xl mb-3 text-center">Add Employee</h2>
+
+                    <div class="flex mb-5 items-center justify-evenly">
+                        <img id='preview_img' class="h-16 w-16 object-cover bg-slateLight rounded-full" src=""
+                            alt="profile photo" />
+                        <button
+                            class="w-fit h-full p-2 bg-accent rounded font-semibold text-slateDeep hover:bg-accent/80 transition"
+                            onclick="document.getElementById('getFile').click()">Insert Your Photo</button>
+                        <input id="getFile" type="file" class="hidden">
+                    </div>
+
+                    <input type="text" placeholder="Full Name"
+                        class="w-full p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent mb-4 outline-none">
+                    <input type="email" placeholder="Email"
+                        class="w-full p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent mb-4 outline-none">
+
+                    <select placeholder="Position"
+                        class="w-full p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent mb-4 outline-none">
+                        <option value="" disabled selected>Select Position</option>
+                        <option value="Receptionists">Receptionists</option>
+                        <option value="IT Technicians">IT Technicians</option>
+                        <option value="Security Officers ">Security Officers </option>
+                        <option value="Cleaning">Cleaning</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Other roles">Other roles</option>
+                    </select>
+
+                    <input type="text" placeholder="Phone number"
+                        class="w-full p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent mb-4 outline-none">
+
+                    <select placeholder="Current location"
+                        class="w-full p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent mb-4 outline-none">
+                        <option value="" disabled selected>Select Location</option>
+                        <option value="Reception">Reception</option>
+                        <option value="Server room">Server room</option>
+                        <option value="Security Room">Security Room</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Cleaning">Cleaning</option>
+                    </select>
+
+                    <div class="flex gap-2 mb-4">
+                        <input id="experienceInput" type="text" placeholder="Add Experience..."
+                            class="w-full p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent outline-none">
+                        <button id="addExperienceBtn"
+                            class="px-4 bg-accent rounded font-bold text-slateDeep hover:bg-accent/80 transition text-xl">
+                            +
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between mt-4 pb-2">
+                        <button
+                            class="w-[48%] p-2 bg-accent rounded font-semibold text-slateDeep hover:bg-accent/80 transition">Save</button>
+                        <button
+                            class="w-[48%] p-2 border border-accent text-accent rounded font-semibold hover:bg-accent hover:text-slateDeep transition">Cancel</button>
+                    </div>
+                </div>
+
+                <div class="w-72 h-full border-l border-slateDeep pl-5 flex flex-col">
+                    <h3 class="text-accent font-semibold text-lg mb-3 shrink-0">Experience List</h3>
+
+                    <div id="experienceList" class="flex flex-col gap-2 overflow-y-auto custom-scrollbar h-full pb-2">
+                        <p class="text-slate-500 text-sm italic empty-msg select-none">No experience added yet.</p>
+                    </div>
+                </div>
+
+            </div>
         </div>
         <!-- the grid layout for the rooms -->
         <div class="flex-1 p-6 ">

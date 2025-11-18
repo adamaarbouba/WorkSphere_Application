@@ -9,12 +9,10 @@
     --font-raleway: "Raleway", sans-serif;
     --font-weight-regular: 400;
     --font-weight-semibold: 600;
-    --container-xs: 20rem;
-    --container-sm: 24rem;
-    --container-md: 28rem;
-    --spacing-1: 0.25rem;
-    --spacing-2: 0.5rem;
-    --spacing-3: 0.75rem;
+}
+
+button{
+    @apply cursor-pointer
 }
 
 .room {
