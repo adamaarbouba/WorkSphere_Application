@@ -12,7 +12,7 @@
 
 
 
-<body class="bg-slateDeep text-white font-raleway min-h-screen">
+<body class="bg-slateDeep text-white font-raleway h-dvh flex flex-col overflow-hidden">
     <nav class="w-full bg-slateMid py-4 shadow-md">
         <div class="max-w-3xl mx-auto flex items-center justify-evenly">
             <a href="src/Overview.html" class="text-accent font-semibold hover:text-accent/80 transition">Overview</a>
@@ -25,19 +25,28 @@
 
 
 
-    <main class="flex min-h-[calc(100vh-64px)]">
+    <main class="flex flex-1 h-full relative">
         <!-- Sidebar -->
-        <aside id="sideBar" class=" bg-slateMid w-64 flex-col p-4 shadow-md">
-            <h2 class="text-xl font-semibold text-accent mb-2">Search</h2>
-            <div class="relative mb-2">
-                <input type="text" placeholder="Search For Employee"
-                    class="w-full text-[0.75rem] p-2 rounded-lg bg-slateDeep text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-accent">
-            </div>
-            <div id="employeeList" class="relative mb-2">
-                <div class="w-full h-17 rounded-2xl bg-slateDeep">
+        <aside id="sideBar" class="bg-slateMid hidden w-64 flex-col p-4 shadow-md h-full z-1">
+
+            <div class="shrink-0">
+                <h2 class="text-xl font-semibold text-accent mb-2">Search</h2>
+                <div class="relative mb-4">
+                    <input type="text" placeholder="Search For Employee"
+                        class="w-full text-[0.75rem] p-2 rounded-lg bg-slateDeep text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-accent">
                 </div>
 
             </div>
+
+            <div id="employeeContainer" class="flex-1 overflow-y-auto pr-1">
+                <div id="employeeList"
+                    class="flex overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] flex-col max-h-80 gap-3">
+                </div>
+            </div>
+            <button id="addEmployeeInformation"
+                class="mt-4 w-full py-3 bg-accent text-slateDeep font-bold rounded-lg shadow-md hover:bg-accent/90 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 group">
+                <span>Add Employee</span>
+            </button>
         </aside>
         <!-- buttons to show or hide the sidebar -->
         <div class="flex flex-col justify-center">
@@ -55,23 +64,23 @@
                 </svg>
             </button>
         </div>
-        <!--                 Adding a Employee modal
- -->
+        <!--Adding a Employee modal -->
         <div id="addEmployeeBtn"
-            class="fixed inset-0 overflow-hidden bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+            class="fixed inset-0 hidden overflow-auto bg-black/50 backdrop-blur-sm  items-center justify-center z-1">
 
             <div
-                class="bg-slateMid p-6 rounded-lg h-[80vh] w-[800px] flex flex-row gap-6 shadow-xl border border-slateDeep">
+                class="bg-slateMid p-6 rounded-lg h-[85vh] w-[95%] sm:w-[700px] flex flex-col gap-6 shadow-xl border border-slateDeep sm:flex-row">
 
-                <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                <div class="flex-1 overflow-auto pr-2 custom-scrollbar">
                     <h2 class="text-accent font-semibold text-xl mb-3 text-center">Add Employee</h2>
 
                     <div class="flex mb-5 items-center justify-evenly">
-                        <img id='preview_img' class="h-16 w-16 object-cover bg-slateLight rounded-full" src=""
-                            alt="profile photo" />
+                        <img id='preview_img' title="profile photo"
+                            class="h-32 w-32 flex items-center text-center object-cover bg-slateLight rounded-full"
+                            src="" alt="profile photo" />
                         <button
                             class="w-fit h-full p-2 bg-accent rounded font-semibold text-slateDeep hover:bg-accent/80 transition"
-                            onclick="document.getElementById('getFile').click()">Insert Your Photo</button>
+                            onclick="document.getElementById('getFile').click()">Add Photo</button>
                         <input id="getFile" type="file" class="hidden">
                     </div>
 
@@ -104,24 +113,41 @@
                         <option value="Cleaning">Cleaning</option>
                     </select>
 
-                    <div class="flex gap-2 mb-4">
-                        <input id="experienceInput" type="text" placeholder="Add Experience..."
-                            class="w-full p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent outline-none">
+                    <div class="bg-slate-700/20 p-2 rounded border border-slate-600/30 ">
+                        <p class="text-accent font-semibold mb-4 block">Experience</p>
+
+                        <div class="flex gap-2 mb-2">
+                            <input id="expFrom" type="text" onblur="(this.type='text')" onfocus="(this.type='date')"
+                                min="2018-12-01" max="2026-01-01" placeholder="From"
+                                class="w-1/2 p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent outline-none">
+                            <input id="expTo" type="text" onblur="(this.type='text')" onfocus="(this.type='date')"
+                                max="2026-01-01" min="2018-12-01" placeholder="To"
+                                class="w-1/2 p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent outline-none">
+                        </div>
+
+                        <div class="flex gap-2 mb-2">
+                            <input id="expRole" type="text" placeholder="Role"
+                                class="w-1/2 p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent outline-none">
+                            <input id="expCompany" type="text" placeholder="Company"
+                                class="w-1/2 p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent outline-none">
+                        </div>
+
                         <button id="addExperienceBtn"
-                            class="px-4 bg-accent rounded font-bold text-slateDeep hover:bg-accent/80 transition text-xl">
-                            +
+                            class="w-full py-2 bg-accent rounded font-bold text-slateDeep hover:bg-accent/80 transition text-sm flex items-center justify-center gap-2">
+                            <span>Add to List</span>
+                            <span class="text-lg font-bold">+</span>
                         </button>
                     </div>
-
                     <div class="flex justify-between mt-4 pb-2">
-                        <button
+                        <button id="saveModalInformation"
                             class="w-[48%] p-2 bg-accent rounded font-semibold text-slateDeep hover:bg-accent/80 transition">Save</button>
-                        <button
+                        <button id="closeModalBtn"
                             class="w-[48%] p-2 border border-accent text-accent rounded font-semibold hover:bg-accent hover:text-slateDeep transition">Cancel</button>
                     </div>
                 </div>
 
-                <div class="w-72 h-full border-l border-slateDeep pl-5 flex flex-col">
+                <div
+                    class="w-full h-48 sm:w-72 sm:h-full border-t sm:border-t-0 sm:border-l border-slateDeep pt-4 sm:pt-0 sm:pl-5 flex flex-col shrink-0">
                     <h3 class="text-accent font-semibold text-lg mb-3 shrink-0">Experience List</h3>
 
                     <div id="experienceList" class="flex flex-col gap-2 overflow-y-auto custom-scrollbar h-full pb-2">
@@ -132,54 +158,45 @@
             </div>
         </div>
         <!-- the grid layout for the rooms -->
-        <div class="flex-1 p-6 ">
-            <div class="grid grid-cols-5 grid-rows-5 sm:grid-cols-10 sm:grid-rows-7 gap-1 w-full h-full p-2">
-
-                <div class="room relative
-        row-start-1 row-end-3 col-start-4 col-end-6
-        sm:col-start-1 sm:col-end-4 sm:row-start-1 sm:row-end-4">
+        <div class="flex-1 p-6 pb-20 overflow-y-auto sm:pb-6">
+            <div class="grid grid-cols-1 gap-4 w-full sm:h-full sm:grid-cols-10 sm:grid-rows-7 sm:gap-1">
+                <div class="room relative min-h-[150px] sm:min-h-0 
+                    sm:col-start-1 sm:col-end-4 sm:row-start-1 sm:row-end-4">
                     <div>Conference room</div>
-
                     <button class="plus-btn">+</button>
                 </div>
 
-                <div class="room relative
-        row-start-1 row-end-3 col-start-1 col-end-3
-        sm:col-start-1 sm:col-end-4 sm:row-start-5 sm:row-end-8">
+                <div class="room relative min-h-[150px] sm:min-h-0
+                    sm:col-start-1 sm:col-end-4 sm:row-start-5 sm:row-end-8">
                     <div>Archives Room</div>
                     <button class="plus-btn">+</button>
                 </div>
 
-                <div class="room relative
-        row-start-5 row-end-6 col-start-4 col-end-6
-        sm:col-start-6 sm:col-end-9 sm:row-start-1 sm:row-end-5">
+                <div class="room relative min-h-[150px] sm:min-h-0
+                    sm:col-start-6 sm:col-end-9 sm:row-start-1 sm:row-end-5">
                     <div>Staff room</div>
                     <button class="plus-btn">+</button>
                 </div>
 
-                <div class="room relative
-        row-start-4 row-end-5 col-start-4 col-end-6
-        sm:col-start-4 sm:col-end-6 sm:row-start-1 sm:row-end-3">
+                <div class="room relative min-h-[150px] sm:min-h-0
+                    sm:col-start-4 sm:col-end-6 sm:row-start-1 sm:row-end-3">
                     <div>Reception</div>
                     <button class="plus-btn">+</button>
                 </div>
 
-                <div class="room relative
-        row-start-3 row-end-4 col-start-5 col-end-6
-        sm:col-start-9 sm:col-end-11 sm:row-start-1 sm:row-end-5">
+                <div class="room relative min-h-[150px] sm:min-h-0
+                    sm:col-start-9 sm:col-end-11 sm:row-start-1 sm:row-end-5">
                     <div>Security room</div>
                     <button class="plus-btn">+</button>
                 </div>
 
-                <div class="room relative
-        row-start-4 row-end-6 col-start-1 col-end-2
-        sm:col-start-6 sm:col-end-11 sm:row-start-6 sm:row-end-8">
+                <div class="room relative min-h-[150px] sm:min-h-0
+                    sm:col-start-6 sm:col-end-11 sm:row-start-6 sm:row-end-8">
                     <div>Server room</div>
                     <button class="plus-btn">+</button>
                 </div>
 
             </div>
-
         </div>
     </main>
     <script src="src/index.js"></script>
