@@ -15,19 +15,14 @@
 <body class="bg-slateDeep text-white font-raleway h-dvh flex flex-col overflow-hidden">
     <nav class="w-full bg-slateMid py-4 shadow-md">
         <div class="max-w-3xl mx-auto flex items-center justify-evenly">
-            <a href="src/Overview.html" class="text-accent font-semibold hover:text-accent/80 transition">Overview</a>
             <a href="index.html">
                 <div class="text-2xl font-semibold text-white tracking-wide">WorkSphear</div>
             </a>
-            <a href="src/Employee.html" class="text-accent font-semibold hover:text-accent/80 transition">Employee</a>
         </div>
     </nav>
-
-
-
-    <main class="flex flex-1 h-full relative">
+    <main class="flex flex-1 h-full flex-col relative sm:flex-row">
         <!-- Sidebar -->
-        <aside id="sideBar" class="bg-slateMid hidden w-64 flex-col p-4 shadow-md h-full z-1">
+        <aside id="sideBar" class="bg-slateMid hidden w-full flex-col p-4 shadow-md h-full z-1 sm:w-64">
 
             <div class="shrink-0">
                 <h2 class="text-xl font-semibold text-accent mb-2">Search</h2>
@@ -49,15 +44,17 @@
             </button>
         </aside>
         <!-- buttons to show or hide the sidebar -->
-        <div class="flex flex-col justify-center">
-            <button id="hideSideBarBtn" class="hidden w-fit h-full p-2 bg-accent rounded hover:bg-accent/80 transition">
+        <div class="flex flex-col justify-center z-1">
+            <button id="hideSideBarBtn" title="hide sidebar button"
+                class="hidden w-full h-full p-2 bg-accent rounded hover:bg-accent/80 transition sm:w-fit">
                 <svg class="w-6 h-6 text-slateDeep" fill="none" stroke="currentColor" stroke-width="2"
                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7" />
                 </svg>
             </button>
 
-            <button id="showSideBarBtn" class="w-fit h-full p-2 bg-accent rounded hover:bg-accent/80 transition">
+            <button id="showSideBarBtn" title="show sidebar button"
+                class="w-full h-full p-2 bg-accent rounded hover:bg-accent/80 transition sm:w-fit">
                 <svg class="w-6 h-6 text-slateDeep" fill="none" stroke="currentColor" stroke-width="2"
                     viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -67,29 +64,29 @@
         <!--Adding a Employee modal -->
         <div id="addEmployeeBtn"
             class="fixed inset-0 hidden overflow-auto bg-black/50 backdrop-blur-sm  items-center justify-center z-1">
-
             <div
                 class="bg-slateMid p-6 rounded-lg h-[85vh] w-[95%] sm:w-[700px] flex flex-col gap-6 shadow-xl border border-slateDeep sm:flex-row">
 
-                <div class="flex-1 overflow-auto pr-2 custom-scrollbar">
+                <div class="flex-1 overflow-auto pr-2">
                     <h2 class="text-accent font-semibold text-xl mb-3 text-center">Add Employee</h2>
 
                     <div class="flex mb-5 items-center justify-evenly">
-                        <img id='preview_img' title="profile photo"
-                            class="h-32 w-32 flex items-center text-center object-cover bg-slateLight rounded-full"
-                            src="" alt="profile photo" />
-                        <button
-                            class="w-fit h-full p-2 bg-accent rounded font-semibold text-slateDeep hover:bg-accent/80 transition"
-                            onclick="document.getElementById('getFile').click()">Add Photo</button>
-                        <input id="getFile" type="file" class="hidden">
+                        <img id='preview_img' title="profile photo" src="" alt="profile photo"
+                            class="h-32 w-32 flex items-center text-center object-cover bg-slateLight rounded-full" />
                     </div>
-
-                    <input type="text" placeholder="Full Name"
+                    <input id="photoURL" type="url" placeholder="Photo URL"
                         class="w-full p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent mb-4 outline-none">
-                    <input type="email" placeholder="Email"
+                    <span id="fullNameWarningMsg"
+                        class="text-accent hidden font-raleway animate-pulse text-[0.75rem]">Invalid Full Name</span>
+                    <input type="text" id="nameInput" placeholder="Full Name"
                         class="w-full p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent mb-4 outline-none">
-
-                    <select placeholder="Position"
+                    <span id="emailWarningMsg"
+                        class="text-accent hidden font-raleway animate-pulse text-[0.75rem]">Invalid Email</span>
+                    <input type="email" id="emailInput" placeholder="Email"
+                        class="w-full p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent mb-4 outline-none">
+                    <span id="PositionWarningMsg"
+                        class="text-accent hidden font-raleway animate-pulse text-[0.75rem]">Invalid Position</span>
+                    <select placeholder="Position" id="positionInput"
                         class="w-full p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent mb-4 outline-none">
                         <option value="" disabled selected>Select Position</option>
                         <option value="Receptionists">Receptionists</option>
@@ -99,20 +96,10 @@
                         <option value="Manager">Manager</option>
                         <option value="Other roles">Other roles</option>
                     </select>
-
-                    <input type="text" placeholder="Phone number"
+                    <span id="phoneWarningMsg"
+                        class="text-accent hidden font-raleway animate-pulse text-[0.75rem]">Invalid Number</span>
+                    <input type="text" placeholder="Phone number" id="phoneInput"
                         class="w-full p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent mb-4 outline-none">
-
-                    <select placeholder="Current location"
-                        class="w-full p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent mb-4 outline-none">
-                        <option value="" disabled selected>Select Location</option>
-                        <option value="Reception">Reception</option>
-                        <option value="Server room">Server room</option>
-                        <option value="Security Room">Security Room</option>
-                        <option value="Manager">Manager</option>
-                        <option value="Cleaning">Cleaning</option>
-                    </select>
-
                     <div class="bg-slate-700/20 p-2 rounded border border-slate-600/30 ">
                         <p class="text-accent font-semibold mb-4 block">Experience</p>
 
@@ -131,7 +118,9 @@
                             <input id="expCompany" type="text" placeholder="Company"
                                 class="w-1/2 p-2 rounded bg-slateDeep text-white text-sm focus:ring focus:ring-accent outline-none">
                         </div>
-
+                        <span id="expWarningMsg"
+                            class="text-accent hidden font-raleway animate-pulse text-[0.75rem]">Please
+                            Fill In The Space Before Submitting a New Experience</span>
                         <button id="addExperienceBtn"
                             class="w-full py-2 bg-accent rounded font-bold text-slateDeep hover:bg-accent/80 transition text-sm flex items-center justify-center gap-2">
                             <span>Add to List</span>
@@ -157,40 +146,79 @@
 
             </div>
         </div>
+        <!-- Delete modal -->
+        <div id="deleteEmployeeModal"
+            class="fixed inset-0 hidden overflow-auto bg-black/60 backdrop-blur-sm items-center justify-center z-50">
+
+            <div
+                class="bg-slateMid p-6 rounded-xl w-[90%] max-w-md shadow-2xl border border-slateDeep transform transition-all scale-100">
+
+                <div class="flex justify-center mb-5">
+                    <div class="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                            </path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="text-center mb-8">
+                    <h3 class="text-xl font-bold text-white mb-2">Delete Employee?</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">
+                        Are you sure you want to remove this employee? <br>
+                        This action cannot be undone and their data will be lost.
+                    </p>
+                </div>
+
+                <div class="flex gap-3">
+                    <button id="cancelDeleteBtn"
+                        class="w-[48%] p-2 border border-accent text-accent rounded font-semibold hover:bg-accent hover:text-slateDeep transition">
+                        Cancel
+                    </button>
+
+                    <button id="confirmDeleteBtn"
+                        class="flex-1 py-2.5 px-4 bg-accent rounded-lg text-white font-bold shadow-lg hover:bg-red-600 transition-all duration-200">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- the grid layout for the rooms -->
-        <div class="flex-1 p-6 pb-20 overflow-y-auto sm:pb-6">
+        <div id="workSphere" class="flex-1 p-6 pb-20 overflow-y-auto sm:pb-6">
             <div class="grid grid-cols-1 gap-4 w-full sm:h-full sm:grid-cols-10 sm:grid-rows-7 sm:gap-1">
-                <div class="room relative min-h-[150px] sm:min-h-0 
+                <div id="Conference" class="room relative min-h-[150px] sm:min-h-0 
                     sm:col-start-1 sm:col-end-4 sm:row-start-1 sm:row-end-4">
                     <div>Conference room</div>
-                    <button class="plus-btn">+</button>
+                    <button class="plus-btn tronsform transition hover:scale-110 duration-300">+</button>
                 </div>
 
-                <div class="room relative min-h-[150px] sm:min-h-0
+                <div id="Archives" class="room relative min-h-[150px] sm:min-h-0
                     sm:col-start-1 sm:col-end-4 sm:row-start-5 sm:row-end-8">
-                    <div>Archives Room</div>
-                    <button class="plus-btn">+</button>
+                    <div class="animate-pulse">Archives Room</div>
+                    <button class="plus-btn ">+</button>
                 </div>
 
-                <div class="room relative min-h-[150px] sm:min-h-0
+                <div id="Staff" class="room relative min-h-[150px] sm:min-h-0
                     sm:col-start-6 sm:col-end-9 sm:row-start-1 sm:row-end-5">
                     <div>Staff room</div>
                     <button class="plus-btn">+</button>
                 </div>
 
-                <div class="room relative min-h-[150px] sm:min-h-0
+                <div id="Reception" class="room relative min-h-[150px] sm:min-h-0
                     sm:col-start-4 sm:col-end-6 sm:row-start-1 sm:row-end-3">
                     <div>Reception</div>
                     <button class="plus-btn">+</button>
                 </div>
 
-                <div class="room relative min-h-[150px] sm:min-h-0
+                <div id="Security" class="room relative min-h-[150px] sm:min-h-0
                     sm:col-start-9 sm:col-end-11 sm:row-start-1 sm:row-end-5">
                     <div>Security room</div>
                     <button class="plus-btn">+</button>
                 </div>
 
-                <div class="room relative min-h-[150px] sm:min-h-0
+                <div id="Server" class="room relative min-h-[150px] sm:min-h-0
                     sm:col-start-6 sm:col-end-11 sm:row-start-6 sm:row-end-8">
                     <div>Server room</div>
                     <button class="plus-btn">+</button>

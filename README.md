@@ -22,9 +22,6 @@ The main objective is to facilitate the organization and allocation of employees
 ## Interaction and Navigation
 
 ### Navigation
-
-- Page Employees has a database with all the employees with all their details in a card layout
-- Page Overview has a top view with all the selected employees in their zone without the ability to change the zones or add any more employees; simply put a "Map of the current floor"
 - Page WorkSphear is the main page on which you can change the employees' details and their zones preferences
 
 ### UI Intractive
