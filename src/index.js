@@ -16,7 +16,7 @@ function initializeDefaultEmployees() {
     "id": "emp-0-1763627588515",
     "fullName": "mme Sanndi Rosario",
     "email": "namehimsomuch@gmial.com",
-    "position": "Reception",
+    "position": "Receptionists",
     "phone": "0606050523",
     "currentLocation": "Staff room",
     "photoUrl": "https://imgs.search.brave.com/q-QoMPyZHgH3putURkfCdIQMa5Bg8luup8qs3GjbpQs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS12ZWN0/b3IvdXNlci1wcm9m/aWxlLWljb24tY2ly/Y2xlXzEyNTYwNDgt/MTI0OTkuanBnP3Nl/bXQ9YWlzX2h5YnJp/ZCZ3PTc0MCZxPTgw",
@@ -57,14 +57,49 @@ function generateId() {
   return `s${Date.now() + Math.random().toString(36)}`;
 }
 
+// search in the sidebar
+
+
+
 // Profile Photo Preview Handling
 
 const photoURL = document.getElementById("photoURL");
 const preview_img = document.getElementById("preview_img");
+const nameInput = document.getElementById("nameInput");
 
-photoURL.addEventListener("input", () => {
-  preview_img.src = photoURL.value;
-});
+photoURL.addEventListener("input", () => imgCheckr(nameInput.value, photoURL.value));
+nameInput.addEventListener("input", () => imgCheckr(nameInput.value, photoURL.value));
+
+function getAvatarUrl(name) {
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=random&color=fff`;
+}
+
+function imgCheckr(fullname, url) {
+  const fallback = getAvatarUrl(fullname);
+
+  if (!url || url.trim() === "") {
+    preview_img.src = fallback;
+    return;
+  }
+
+  const img = new Image();
+  img.onload = () => { preview_img.src = url; };
+  img.onerror = () => { preview_img.src = fallback; };
+  img.src = url;
+}
+
+function getFinalPhotoUrl(name, inputUrl) {
+  // If no URL provided, generate avatar
+  if (!inputUrl || inputUrl.trim() === "") {
+    return getAvatarUrl(name);
+  }
+
+  if (preview_img.src.includes("ui-avatars.com")) {
+    return getAvatarUrl(name);
+  }
+
+  return inputUrl;
+}
 
 // Add Employee Modal Toggle
 
@@ -123,7 +158,7 @@ addExpBtn.addEventListener('click', () => {
   }
 });
 
-// Create Experience HTML Card
+// Create Experience Card
 
 function createExperienceCard(from, to, role, company) {
   const itemContainer = document.createElement('div');
@@ -163,10 +198,29 @@ function createExperienceCard(from, to, role, company) {
 
   return itemContainer;
 }
-
+// modal form validation
 const nameRegex = /^[a-zA-Z\s]{3,}$/;
-const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-const phoneRegex = /^\d{10}$/;
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const phoneRegex = /^0[567][0-9]{8}$/;
+
+function validateForm(name, email, phone, position) {
+  const nameWarn = document.getElementById('fullNameWarningMsg');
+  const emailWarn = document.getElementById('emailWarningMsg');
+  const phoneWarn = document.getElementById('phoneWarningMsg');
+  const positionWarn = document.getElementById('PositionWarningMsg');
+
+  nameWarn.classList.add('hidden');
+  emailWarn.classList.add('hidden');
+  phoneWarn.classList.add('hidden');
+  positionWarn.classList.add('hidden');
+
+  if (!nameRegex.test(name)) { nameWarn.classList.remove('hidden'); return false; }
+  if (!emailRegex.test(email)) { emailWarn.classList.remove('hidden'); return false; }
+  if (!phoneRegex.test(phone)) { phoneWarn.classList.remove('hidden'); return false; }
+  if (!position) { positionWarn.classList.remove('hidden'); return false; }
+
+  return true;
+}
 
 // Save Employee 
 
@@ -177,66 +231,122 @@ saveBtn.addEventListener('click', () => {
   const phoneVal = document.getElementById('phoneInput').value.trim();
   const photoVal = document.getElementById('photoURL').value;
 
-  const nameWarn = document.getElementById('fullNameWarningMsg');
-  const emailWarn = document.getElementById('emailWarningMsg');
-  const phoneWarn = document.getElementById('phoneWarningMsg');
-  const positionWarn = document.getElementById('PositionWarningMsg')
+  const isValid = validateForm(fullNameVal, emailVal, phoneVal, positionVal);
+  if (!isValid) return;
 
-  nameWarn.classList.add('hidden');
-  emailWarn.classList.add('hidden');
-  phoneWarn.classList.add('hidden');
-  positionWarn.classList.add('hidden');
+  // Create object for the Employee  
+  const finalPhoto = getFinalPhotoUrl(fullNameVal, photoVal);
 
-  // Validation Checks
-  if (!nameRegex.test(fullNameVal)) {
-    nameWarn.classList.remove('hidden');
-    return;
-  }
-
-  if (!emailRegex.test(emailVal)) {
-    emailWarn.classList.remove('hidden');
-    return;
-  }
-
-  if (!phoneRegex.test(phoneVal)) {
-    phoneWarn.classList.remove('hidden');
-    return;
-  }
-
-  if (!positionVal) {
-    positionWarn.classList.remove('hidden');
-    return;
-  }
-
-
-  // Create Object
   const newEmployee = {
     id: generateId(),
     fullName: fullNameVal,
     email: emailVal,
     position: positionVal,
     phone: phoneVal,
-    photoUrl: photoVal || "https://imgs.search.brave.com/q-QoMPyZHgH3putURkfCdIQMa5Bg8luup8qs3GjbpQs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS12ZWN0/b3IvdXNlci1wcm9m/aWxlLWljb24tY2ly/Y2xlXzEyNTYwNDgt/MTI0OTkuanBnP3Nl/bXQ9YWlzX2h5YnJp/ZCZ3PTc0MCZxPTgw",
+    photoUrl: finalPhoto,
     experience: tempExperienceList
   };
-    
-  
+
   Employees.push(newEmployee);
   saveData(Employees);
   renderEmployeeList();
+  resetForm();
+});
 
-  // Close Modal & Reset Form
+// Freeing the Inputs and restarting the adding modal 
+
+function resetForm() {
   modal.classList.add('hidden');
   modal.classList.remove('flex');
-
   tempExperienceList = [];
   document.getElementById('experienceList').innerHTML = '<p class="text-slate-500 text-sm italic empty-msg select-none">No experience added yet.</p>';
+
   document.getElementById('nameInput').value = "";
   document.getElementById('emailInput').value = "";
   document.getElementById('phoneInput').value = "";
   document.getElementById('photoURL').value = "";
   document.getElementById('positionInput').value = "";
+
+  document.getElementById('preview_img').src = "";
+}
+
+// Display Employee data 
+
+const employeeList = document.getElementById('employeeList');
+
+employeeList.addEventListener('click', (event) => {
+  const card = event.target.closest('.employeesCard');
+  if (card && !event.target.closest('button')) {
+    const employeeID = card.id;
+    displayEmployeeDetails(employeeID);
+  }
 });
+function displayEmployeeDetails(id) {
+  const employee = Employees.find(emp => emp.id === id);
+
+  if (!employee) {
+    console.error("Employee not found!");
+    return;
+  }
+
+  const experienceHtml = employee.experience.length > 0
+    ? employee.experience.map(exp => `
+        <li class="mb-2 border-b border-slate-600/30 pb-2 last:border-0">
+          <div class="text-accent font-semibold text-xs">${exp.role}</div>
+          <div class="text-white text-xs">${exp.company}</div>
+          <div class="text-[10px] text-slate-400">${exp.from} - ${exp.to}</div>
+        </li>
+      `).join('')
+    : `<p class="text-slate-500 text-sm italic">No experience recorded.</p>`;
+
+  // template lateral for the info model
+
+  const employeeDetailTemplate = `
+    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/60 backdrop-blur-sm p-4">
+      <div class="bg-slateMid w-full max-w-md rounded-lg border border-slateDeep shadow-2xl overflow-hidden relative">
+        
+        <button onclick="this.closest('.fixed').remove()" class="absolute top-3 right-3 text-slate-400 hover:text-red-400 font-bold text-xl">
+          &times;
+        </button>
+        <div class="bg-slateDeep p-6 flex flex-col items-center border-b border-slate-600/30">
+          <img src="${employee.photoUrl}" alt="${employee.fullName}" 
+               class="w-24 h-24 rounded-full object-cover border-2 border-accent mb-3 shadow-lg">
+          <h2 class="text-xl text-white font-bold capitalize">${employee.fullName}</h2>
+          <span class="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-semibold mt-1">
+            ${employee.position}
+          </span>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="flex items-center gap-3 text-slate-300 text-sm">
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+              </svg>   
+            </span>
+            <span>${employee.email}</span>
+          </div>
+          <div class="flex items-center gap-3 text-slate-300 text-sm">
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M11 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM5 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
+                <path d="M8 14a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+              </svg>   
+            </span>
+            <span>${employee.phone}</span>
+          </div>
+          <div class="mt-4 pt-4 border-t border-slate-600/30">
+            <h3 class="text-accent font-semibold text-sm mb-2">Experience History</h3>
+            <ul class="max-h-40 overflow-y-auto custom-scrollbar">
+              ${experienceHtml}
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', employeeDetailTemplate);
+}
 
 // Delete Employee Modal with the deletion logic il devide them later for more optimazation
 
@@ -270,32 +380,13 @@ confirmDeleteBtn.addEventListener('click', () => {
   }
 });
 
-
-
-// room limitiation 
-
-const conferenceRoom = document.getElementById("Conference");
-const ArchivesRoom = document.getElementById("Archives");
-const StaffRoom = document.getElementById("Staff");
-const ReceptionRoom = document.getElementById("Reception");
-const SecurityRoom = document.getElementById("Security");
-const ServerRoom = document.getElementById("Server");
-
-const roomBtnPlus = document.querySelectorAll(".roomBtnPlus");
-
-roomBtnPlus.forEach(btn => {
-  btn.addEventListener("click", () => {
-    console.log(this.parentElement)
-  });
-});
-
 // Creats a card for each employee at a time
 
 function createEmployeeCard(emp, index) {
   if (!emp) return '';
 
   return `
-      <div id="${emp.id}" value="${emp.id}" class="employeesCard w-full rounded-2xl bg-slateDeep flex items-center p-2 shadow-lg border border-slate-700/50 hover:border-accent/30 transition-colors">
+      <div id="${emp.id}" value="${emp.position}" class="employeesCard w-full rounded-2xl bg-slateDeep flex items-center p-2 shadow-lg border border-slate-700/50 hover:border-accent/30 transition-colors">
         
         <div class="shrink-0 mr-2">
             <img src="${emp.photoUrl}" alt="Profile" class="h-10 w-10 rounded-full object-cover border border-accent/20">
@@ -317,8 +408,8 @@ function createEmployeeCard(emp, index) {
 }
 
 // Render Employee List 
-function renderEmployeeList() {
-  const container = document.getElementById('employeeList');
+function renderEmployeeList(e = 'employeeList',) {
+  const container = document.getElementById(`${e}`);
   container.innerHTML = '';
 
   Employees.forEach((emp, index) => {
@@ -326,74 +417,129 @@ function renderEmployeeList() {
   });
 }
 
-renderEmployeeList();
 
+// room limitiation
 
+function roomLimitation(room) {
+  const accesslimitation = {
+    "Conference": [
+      "Receptionists",
+      "IT Technicians",
+      "Security Officers ",
+      "Cleaning",
+      "Manager",
+      "Other roles"
+    ],
+    "Archives": [
+      "Receptionists",
+      "IT Technicians",
+      "Security Officers ",
+      "Manager",
+      "Other roles"
+    ],
+    "Staff": [
+      "Receptionists",
+      "IT Technicians",
+      "Security Officers ",
+      "Cleaning",
+      "Manager",
+      "Other roles"
+    ],
+    "Reception": [
+      "Cleaning",
+      "Receptionists",
+      "Manager"
+    ],
+    "Security": [
+      "Security Officers ",
+      "Manager",
+      "Cleaning"
+    ],
+    "Server": [
+      "IT Technicians",
+      "Manager",
+      "Cleaning"
+    ]
+  };
 
-// Display Employee data 
+  const allowedPositions = accesslimitation[room];
 
-const employeeList = document.getElementById('employeeList');
-
-employeeList.addEventListener('click', (event) => {
-  const card = event.target.closest('.employeesCard');
-  if (card && !event.target.closest('button')) { 
-    const employeeID = card.id;
-    displayEmployeeDetails(employeeID);
-  }
-});
-function displayEmployeeDetails(id) {
-  const employee = Employees.find(emp => emp.id === id);
-
-  if (!employee) {
-    console.error("Employee not found!");
+  if (!allowedPositions) {
+    console.warn(`No access rules found for room: ${room}`);
+    document.getElementById("roomModalContent").innerHTML =
+      '<p class="text-slate-500 text-sm italic p-4">Access rules not defined for this room.</p>';
     return;
   }
 
-  const experienceHtml = employee.experience.length > 0 
-    ? employee.experience.map(exp => `
-        <li class="mb-2 border-b border-slate-600/30 pb-2 last:border-0">
-          <div class="text-accent font-semibold text-xs">${exp.role}</div>
-          <div class="text-white text-xs">${exp.company}</div>
-          <div class="text-[10px] text-slate-400">${exp.from} - ${exp.to}</div>
-        </li>
-      `).join('')
-    : `<p class="text-slate-500 text-sm italic">No experience recorded.</p>`;
+  const employeesWithAccess = Employees.filter(emp =>
+    allowedPositions.includes(emp.position)
+  );
 
-  const employeeDetailTemplate = `
-    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/60 backdrop-blur-sm p-4">
-      <div class="bg-slateMid w-full max-w-md rounded-lg border border-slateDeep shadow-2xl overflow-hidden relative">
-        
-        <button onclick="this.closest('.fixed').remove()" class="absolute top-3 right-3 text-slate-400 hover:text-red-400 font-bold text-xl">
-          &times;
-        </button>
+  renderEmployeeListInModal(employeesWithAccess, "roomModalContent");
 
-        <div class="bg-slateDeep p-6 flex flex-col items-center border-b border-slate-600/30">
-          <img src="${employee.photoUrl}" alt="${employee.fullName}" 
-               class="w-24 h-24 rounded-full object-cover border-2 border-accent mb-3 shadow-lg">
-          <h2 class="text-xl text-white font-bold capitalize">${employee.fullName}</h2>
-          <span class="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-semibold mt-1">
-            ${employee.position}
-          </span>
-        </div>
-
-        <div class="p-6 space-y-4">
-          <div class="flex items-center gap-3 text-slate-300 text-sm">
-            <span>${employee.email}</span>
-          </div>
-          <div class="flex items-center gap-3 text-slate-300 text-sm">
-            <span>${employee.phone}</span>
-          </div>
-          
-          <div class="mt-4 pt-4 border-t border-slate-600/30">
-            <h3 class="text-accent font-semibold text-sm mb-2">Experience History</h3>
-            <ul class="max-h-40 overflow-y-auto custom-scrollbar">
-              ${experienceHtml}
-            </ul>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  `;
-  document.body.insertAdjacentHTML('beforeend', employeeDetailTemplate);
+  const roomModalTitle = document.getElementById('roomModalTitle');
+  if (roomModalTitle) {
+    roomModalTitle.textContent = `Access Check: ${room} Room`;
+  }
 }
+
+
+function renderEmployeeListInModal(employeeArray, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+
+  if (employeeArray.length === 0) {
+    container.innerHTML = '<p class="text-slate-500 text-sm italic p-4">No employees with access to this room.</p>';
+    return;
+  }
+
+  employeeArray.forEach((emp, index) => {
+    const roomCardEmployee = `
+            <div id="${emp.id}" value="${emp.position}" class="employeesCard w-full rounded-2xl bg-slate-800/50 flex items-center p-2 shadow-lg border border-slate-700/50">
+                <div class="shrink-0 mr-2">
+                    <img src="${emp.photoUrl}" alt="Profile" class="h-10 w-10 rounded-full object-cover border border-green-500/20">
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="text-white font-semibold text-sm truncate capitalize">${emp.fullName}</h4>
+                    <p class="text-green-400 text-[10px] truncate">Has Access (${emp.position})</p>
+                </div>
+            </div>
+        `;
+    container.innerHTML += roomCardEmployee;
+  });
+}
+
+function renderEmployeeList(e = 'employeeList',) {
+  const container = document.getElementById(`${e}`);
+  container.innerHTML = '';
+
+  Employees.forEach((emp, index) => {
+    container.innerHTML += createEmployeeCard(emp, index);
+  });
+}
+
+const roomBtnPlus = document.querySelectorAll(".roomBtnPlus");
+
+roomBtnPlus.forEach(btn => {
+  btn.addEventListener("click", (e) => {
+    const roomName = e.currentTarget.parentElement.id;
+
+    roomModal.classList.remove("hidden");
+    roomModal.classList.add("flex");
+
+    roomLimitation(roomName);
+  });
+});
+
+const closeRoomModalBtn = document.getElementById('closeRoomModalBtn');
+if (closeRoomModalBtn) {
+  closeRoomModalBtn.addEventListener('click', () => {
+    roomModal.classList.add("hidden");
+    roomModal.classList.remove("flex");
+  });
+}
+
+function appExe() {
+  renderEmployeeList();
+}
+appExe();
