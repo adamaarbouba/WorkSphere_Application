@@ -14,7 +14,7 @@ if (storedData) {
 function initializeDefaultEmployees() {
   Employees = [{
     "id": "emp-0-1763627588515",
-    "fullName": "mme Sanfora",
+    "fullName": "mme Sanndi Rosario",
     "email": "namehimsomuch@gmial.com",
     "position": "Reception",
     "phone": "0606050523",
@@ -25,6 +25,7 @@ function initializeDefaultEmployees() {
 }
 
 // Sidebar show hide
+
 const hideSideBarBtn = document.getElementById(`hideSideBarBtn`);
 const sideBar = document.getElementById(`sideBar`);
 const showSideBarBtn = document.getElementById(`showSideBarBtn`);
@@ -46,15 +47,18 @@ hideSideBarBtn.addEventListener('click', hideSidebar);
 showSideBarBtn.addEventListener('click', showSidebar);
 
 // Save Data
+
 function saveData(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 // Generate ID
+
 function generateId() {
   return `s${Date.now() + Math.random().toString(36)}`;
 }
 
 // Profile Photo Preview Handling
+
 const photoURL = document.getElementById("photoURL");
 const preview_img = document.getElementById("preview_img");
 
@@ -63,8 +67,9 @@ photoURL.addEventListener("input", () => {
 });
 
 // Add Employee Modal Toggle
+
 const addEmployeeBtn = document.getElementById('addEmployeeInformation');
-const modal = document.getElementById('addEmployeeBtn');
+const modal = document.getElementById('addEmployeeModal');
 const cancelBtn = modal.querySelector('#closeModalBtn');
 
 addEmployeeBtn.addEventListener('click', () => {
@@ -78,6 +83,7 @@ cancelBtn.addEventListener('click', () => {
 });
 
 // Experience Addition Section 
+
 let tempExperienceList = [];
 const addExpBtn = document.getElementById('addExperienceBtn');
 const expList = document.getElementById('experienceList');
@@ -118,6 +124,7 @@ addExpBtn.addEventListener('click', () => {
 });
 
 // Create Experience HTML Card
+
 function createExperienceCard(from, to, role, company) {
   const itemContainer = document.createElement('div');
   itemContainer.className = "w-full bg-slateDeep p-3 rounded border border-slate-600/50 animate-pulse-once shadow-sm group relative hover:border-red-500/50 transition-colors cursor-pointer";
@@ -162,6 +169,7 @@ const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
 const phoneRegex = /^\d{10}$/;
 
 // Save Employee 
+
 saveBtn.addEventListener('click', () => {
   const fullNameVal = document.getElementById('nameInput').value.trim();
   const emailVal = document.getElementById('emailInput').value.trim();
@@ -200,6 +208,7 @@ saveBtn.addEventListener('click', () => {
     return;
   }
 
+
   // Create Object
   const newEmployee = {
     id: generateId(),
@@ -208,9 +217,10 @@ saveBtn.addEventListener('click', () => {
     position: positionVal,
     phone: phoneVal,
     photoUrl: photoVal || "https://imgs.search.brave.com/q-QoMPyZHgH3putURkfCdIQMa5Bg8luup8qs3GjbpQs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS12ZWN0/b3IvdXNlci1wcm9m/aWxlLWljb24tY2ly/Y2xlXzEyNTYwNDgt/MTI0OTkuanBnP3Nl/bXQ9YWlzX2h5YnJp/ZCZ3PTc0MCZxPTgw",
-    experience: [...tempExperienceList]
+    experience: tempExperienceList
   };
-
+    
+  
   Employees.push(newEmployee);
   saveData(Employees);
   renderEmployeeList();
@@ -229,6 +239,7 @@ saveBtn.addEventListener('click', () => {
 });
 
 // Delete Employee Modal with the deletion logic il devide them later for more optimazation
+
 const deleteModal = document.getElementById('deleteEmployeeModal');
 const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
 const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
@@ -259,14 +270,32 @@ confirmDeleteBtn.addEventListener('click', () => {
   }
 });
 
-// Render Employee List 
-function renderEmployeeList() {
-  const container = document.getElementById('employeeList');
-  container.innerHTML = '';
 
-  Employees.forEach((emp, index) => {
-    const cardHTML = `
-      <div class="w-full rounded-2xl bg-slateDeep flex items-center p-2 shadow-lg border border-slate-700/50 hover:border-accent/30 transition-colors">
+
+// room limitiation 
+
+const conferenceRoom = document.getElementById("Conference");
+const ArchivesRoom = document.getElementById("Archives");
+const StaffRoom = document.getElementById("Staff");
+const ReceptionRoom = document.getElementById("Reception");
+const SecurityRoom = document.getElementById("Security");
+const ServerRoom = document.getElementById("Server");
+
+const roomBtnPlus = document.querySelectorAll(".roomBtnPlus");
+
+roomBtnPlus.forEach(btn => {
+  btn.addEventListener("click", () => {
+    console.log(this.parentElement)
+  });
+});
+
+// Creats a card for each employee at a time
+
+function createEmployeeCard(emp, index) {
+  if (!emp) return '';
+
+  return `
+      <div id="${emp.id}" value="${emp.id}" class="employeesCard w-full rounded-2xl bg-slateDeep flex items-center p-2 shadow-lg border border-slate-700/50 hover:border-accent/30 transition-colors">
         
         <div class="shrink-0 mr-2">
             <img src="${emp.photoUrl}" alt="Profile" class="h-10 w-10 rounded-full object-cover border border-accent/20">
@@ -284,9 +313,87 @@ function renderEmployeeList() {
         </div>
 
       </div>
-    `;
-    container.innerHTML += cardHTML;
+  `;
+}
+
+// Render Employee List 
+function renderEmployeeList() {
+  const container = document.getElementById('employeeList');
+  container.innerHTML = '';
+
+  Employees.forEach((emp, index) => {
+    container.innerHTML += createEmployeeCard(emp, index);
   });
 }
 
 renderEmployeeList();
+
+
+
+// Display Employee data 
+
+const employeeList = document.getElementById('employeeList');
+
+employeeList.addEventListener('click', (event) => {
+  const card = event.target.closest('.employeesCard');
+  if (card && !event.target.closest('button')) { 
+    const employeeID = card.id;
+    displayEmployeeDetails(employeeID);
+  }
+});
+function displayEmployeeDetails(id) {
+  const employee = Employees.find(emp => emp.id === id);
+
+  if (!employee) {
+    console.error("Employee not found!");
+    return;
+  }
+
+  const experienceHtml = employee.experience.length > 0 
+    ? employee.experience.map(exp => `
+        <li class="mb-2 border-b border-slate-600/30 pb-2 last:border-0">
+          <div class="text-accent font-semibold text-xs">${exp.role}</div>
+          <div class="text-white text-xs">${exp.company}</div>
+          <div class="text-[10px] text-slate-400">${exp.from} - ${exp.to}</div>
+        </li>
+      `).join('')
+    : `<p class="text-slate-500 text-sm italic">No experience recorded.</p>`;
+
+  const employeeDetailTemplate = `
+    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/60 backdrop-blur-sm p-4">
+      <div class="bg-slateMid w-full max-w-md rounded-lg border border-slateDeep shadow-2xl overflow-hidden relative">
+        
+        <button onclick="this.closest('.fixed').remove()" class="absolute top-3 right-3 text-slate-400 hover:text-red-400 font-bold text-xl">
+          &times;
+        </button>
+
+        <div class="bg-slateDeep p-6 flex flex-col items-center border-b border-slate-600/30">
+          <img src="${employee.photoUrl}" alt="${employee.fullName}" 
+               class="w-24 h-24 rounded-full object-cover border-2 border-accent mb-3 shadow-lg">
+          <h2 class="text-xl text-white font-bold capitalize">${employee.fullName}</h2>
+          <span class="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-semibold mt-1">
+            ${employee.position}
+          </span>
+        </div>
+
+        <div class="p-6 space-y-4">
+          <div class="flex items-center gap-3 text-slate-300 text-sm">
+            <span>${employee.email}</span>
+          </div>
+          <div class="flex items-center gap-3 text-slate-300 text-sm">
+            <span>${employee.phone}</span>
+          </div>
+          
+          <div class="mt-4 pt-4 border-t border-slate-600/30">
+            <h3 class="text-accent font-semibold text-sm mb-2">Experience History</h3>
+            <ul class="max-h-40 overflow-y-auto custom-scrollbar">
+              ${experienceHtml}
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', employeeDetailTemplate);
+}

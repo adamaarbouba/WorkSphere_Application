@@ -11,7 +11,7 @@
     --font-weight-semibold: 600;
 }
 
-button{
+button {
     @apply cursor-pointer
 }
 

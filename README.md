@@ -22,6 +22,7 @@ The main objective is to facilitate the organization and allocation of employees
 ## Interaction and Navigation
 
 ### Navigation
+
 - Page WorkSphear is the main page on which you can change the employees' details and their zones preferences
 
 ### UI Intractive
@@ -34,12 +35,12 @@ The main objective is to facilitate the organization and allocation of employees
 
 #### Adding Employee
 
-- “+” button at the bottom of the sidebar to make the employee form modal popup.
+- “Add Employee” button at the bottom of the sidebar to make the employee form modal popup.
 - fill in the modal for an employee to get added under the search bar
 
 #### Modifiying and Deleting a Employee
 
-- “+” button in each employee card to modify it or “X” to delete it.
+- “trash-bin-icon” button in each employee card to delete it.
 
 ## Logic and Restrictions
 

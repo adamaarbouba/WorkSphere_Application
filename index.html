@@ -62,7 +62,7 @@
             </button>
         </div>
         <!--Adding a Employee modal -->
-        <div id="addEmployeeBtn"
+        <div id="addEmployeeModal"
             class="fixed inset-0 hidden overflow-auto bg-black/50 backdrop-blur-sm  items-center justify-center z-1">
             <div
                 class="bg-slateMid p-6 rounded-lg h-[85vh] w-[95%] sm:w-[700px] flex flex-col gap-6 shadow-xl border border-slateDeep sm:flex-row">
@@ -186,42 +186,42 @@
         </div>
 
         <!-- the grid layout for the rooms -->
-        <div id="workSphere" class="flex-1 p-6 pb-20 overflow-y-auto sm:pb-6">
+        <div id="workSphere" class="flex-1 p-6 pb-20 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] sm:pb-6">
             <div class="grid grid-cols-1 gap-4 w-full sm:h-full sm:grid-cols-10 sm:grid-rows-7 sm:gap-1">
                 <div id="Conference" class="room relative min-h-[150px] sm:min-h-0 
                     sm:col-start-1 sm:col-end-4 sm:row-start-1 sm:row-end-4">
                     <div>Conference room</div>
-                    <button class="plus-btn tronsform transition hover:scale-110 duration-300">+</button>
+                    <button class="roomBtnPlus plus-btn">+</button>
                 </div>
 
                 <div id="Archives" class="room relative min-h-[150px] sm:min-h-0
                     sm:col-start-1 sm:col-end-4 sm:row-start-5 sm:row-end-8">
-                    <div class="animate-pulse">Archives Room</div>
-                    <button class="plus-btn ">+</button>
+                    <div>Archives Room</div>
+                    <button class="roomBtnPlus plus-btn ">+</button>
                 </div>
 
                 <div id="Staff" class="room relative min-h-[150px] sm:min-h-0
                     sm:col-start-6 sm:col-end-9 sm:row-start-1 sm:row-end-5">
                     <div>Staff room</div>
-                    <button class="plus-btn">+</button>
+                    <button class="roomBtnPlus plus-btn">+</button>
                 </div>
 
                 <div id="Reception" class="room relative min-h-[150px] sm:min-h-0
                     sm:col-start-4 sm:col-end-6 sm:row-start-1 sm:row-end-3">
                     <div>Reception</div>
-                    <button class="plus-btn">+</button>
+                    <button class="roomBtnPlus plus-btn">+</button>
                 </div>
 
                 <div id="Security" class="room relative min-h-[150px] sm:min-h-0
                     sm:col-start-9 sm:col-end-11 sm:row-start-1 sm:row-end-5">
                     <div>Security room</div>
-                    <button class="plus-btn">+</button>
+                    <button  class="roomBtnPlus plus-btn">+</button>
                 </div>
 
                 <div id="Server" class="room relative min-h-[150px] sm:min-h-0
                     sm:col-start-6 sm:col-end-11 sm:row-start-6 sm:row-end-8">
                     <div>Server room</div>
-                    <button class="plus-btn">+</button>
+                    <button class="roomBtnPlus plus-btn">+</button>
                 </div>
 
             </div>
