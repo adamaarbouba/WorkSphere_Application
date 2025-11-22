@@ -18,9 +18,10 @@ function initializeDefaultEmployees() {
     "email": "namehimsomuch@gmial.com",
     "position": "Receptionists",
     "phone": "0606050523",
-    "currentLocation": "Staff room",
+    "currentLocation": "unsigned",
     "photoUrl": "https://imgs.search.brave.com/q-QoMPyZHgH3putURkfCdIQMa5Bg8luup8qs3GjbpQs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS12ZWN0/b3IvdXNlci1wcm9m/aWxlLWljb24tY2ly/Y2xlXzEyNTYwNDgt/MTI0OTkuanBnP3Nl/bXQ9YWlzX2h5YnJp/ZCZ3PTc0MCZxPTgw",
-    "experience": []
+    "experience": [],
+    "inRoom": false
   }];
 }
 
@@ -200,7 +201,7 @@ function createExperienceCard(from, to, role, company) {
 }
 // modal form validation
 const nameRegex = /^[a-zA-Z\s]{3,}$/;
-const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0 -9.-]+\.[a-zA-Z]{2,}$/;
 const phoneRegex = /^0[567][0-9]{8}$/;
 
 function validateForm(name, email, phone, position) {
@@ -244,7 +245,9 @@ saveBtn.addEventListener('click', () => {
     position: positionVal,
     phone: phoneVal,
     photoUrl: finalPhoto,
-    experience: tempExperienceList
+    experience: tempExperienceList,
+    currentLocation: "unsigned",
+    inRoom: false
   };
 
   Employees.push(newEmployee);
@@ -463,14 +466,6 @@ function roomLimitation(room) {
   };
 
   const allowedPositions = accesslimitation[room];
-
-  if (!allowedPositions) {
-    console.warn(`No access rules found for room: ${room}`);
-    document.getElementById("roomModalContent").innerHTML =
-      '<p class="text-slate-500 text-sm italic p-4">Access rules not defined for this room.</p>';
-    return;
-  }
-
   const employeesWithAccess = Employees.filter(emp =>
     allowedPositions.includes(emp.position)
   );
@@ -503,9 +498,13 @@ function renderEmployeeListInModal(employeeArray, containerId) {
                     <h4 class="text-white font-semibold text-sm truncate capitalize">${emp.fullName}</h4>
                     <p class="text-green-400 text-[10px] truncate">Has Access (${emp.position})</p>
                 </div>
+                <button id="addToRoombtn" employee_id="${emp.id}" class="bottom-1 w-6 h-6 flex items-center justify-center bg-accent text-slateDeep rounded-md text-lg leading-none hover:bg-accent/80 transition">
+                +
+                </button>
             </div>
         `;
     container.innerHTML += roomCardEmployee;
+
   });
 }
 
@@ -519,15 +518,16 @@ function renderEmployeeList(e = 'employeeList',) {
 }
 
 const roomBtnPlus = document.querySelectorAll(".roomBtnPlus");
-
+let roomName;
 roomBtnPlus.forEach(btn => {
   btn.addEventListener("click", (e) => {
-    const roomName = e.currentTarget.parentElement.id;
+    roomName = e.target.parentElement.id;
 
     roomModal.classList.remove("hidden");
     roomModal.classList.add("flex");
 
     roomLimitation(roomName);
+    addToRoom();
   });
 });
 
@@ -539,7 +539,39 @@ if (closeRoomModalBtn) {
   });
 }
 
+// Add a Employee To a Room
+
+function addToRoom() {
+  const addToRoomBtn = document.querySelectorAll("#addToRoombtn");
+  addToRoomBtn.forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const cardId = e.target.parentElement.id;
+      const filteredEmployeeForRoom = Employees.find(emp => emp.id === cardId);
+      let roomID = document.getElementById(`${roomName}`);
+      
+      const roomCardEmployee = `
+            <div id="${filteredEmployeeForRoom.id}" value="${filteredEmployeeForRoom.currentLocation}" class="employeesCard w-full rounded-2xl bg-slate-800/50 flex items-center p-2 shadow-lg border border-slate-700/50">
+                <div class="shrink-0 mr-2">
+                    <img src="${filteredEmployeeForRoom.photoUrl}" alt="Profile" class="h-10 w-10 rounded-full object-cover border border-green-500/20">
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="text-white font-semibold text-sm truncate capitalize">${filteredEmployeeForRoom.fullName}</h4>
+                    <p class="text-green-400 text-[10px] truncate">${filteredEmployeeForRoom.position}</p>
+                </div>
+                <button id="addToRoombtn" employee_id="${filteredEmployeeForRoom.id}" class="bottom-1 w-6 h-6 flex items-center justify-center bg-accent text-slateDeep rounded-md text-lg leading-none hover:bg-accent/80 transition">
+                -
+                </button>
+            </div>
+        `;
+      roomID.innerHTML += roomCardEmployee;
+    });
+  });
+}
+
+
 function appExe() {
   renderEmployeeList();
+  // renderEmployeeListInRooms();
+
 }
 appExe();
