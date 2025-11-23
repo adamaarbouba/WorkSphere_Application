@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+    --color-white: #ffffff;
+    --color-accent: #f9b17a;
+    --color-slateLight: #676f9d;
+    --color-slateMid: #424769;
+    --color-slateDeep: #2d3250;
+    --font-raleway: "Raleway", sans-serif;
+    --font-weight-regular: 400;
+    --font-weight-semibold: 600;
+}
+
+button {
+    @apply cursor-pointer
+}
+
+.plus-btn {
+    @apply absolute bottom-1 w-6 h-6 items-center justify-center bg-accent text-slateDeep rounded-md text-lg leading-none hover:bg-accent/80 transition;
+}
