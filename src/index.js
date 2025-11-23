@@ -1,9 +1,16 @@
-const STORAGE_KEY = `unsignedEmployees`;
+const UNSIGNED_KEY = `unsignedEmployees`;
 let Employees = [];
-const storedData = localStorage.getItem(STORAGE_KEY);
+const storedData = localStorage.getItem(UNSIGNED_KEY);
 
 if (storedData) {
   Employees = JSON.parse(storedData);
+
+  Employees.forEach(emp => {
+    emp.inRoom = false;
+  });
+
+  saveData(Employees);
+
   if (Employees.length === 0) {
     initializeDefaultEmployees();
   }
@@ -13,12 +20,11 @@ if (storedData) {
 
 function initializeDefaultEmployees() {
   Employees = [{
-    "id": "emp-0-1763627588515",
+    "id": "Emp17638532517600.97o7hoq5zv4",
     "fullName": "mme Sanndi Rosario",
     "email": "namehimsomuch@gmial.com",
     "position": "Receptionists",
     "phone": "0606050523",
-    "currentLocation": "unsigned",
     "photoUrl": "https://imgs.search.brave.com/q-QoMPyZHgH3putURkfCdIQMa5Bg8luup8qs3GjbpQs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/cHJlbWl1bS12ZWN0/b3IvdXNlci1wcm9m/aWxlLWljb24tY2ly/Y2xlXzEyNTYwNDgt/MTI0OTkuanBnP3Nl/bXQ9YWlzX2h5YnJp/ZCZ3PTc0MCZxPTgw",
     "experience": [],
     "inRoom": false
@@ -49,13 +55,14 @@ showSideBarBtn.addEventListener('click', showSidebar);
 
 // Save Data
 
-function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+function saveData(data, KEY = UNSIGNED_KEY) {
+  localStorage.setItem(KEY, JSON.stringify(data));
 }
+
 // Generate ID
 
 function generateId() {
-  return `s${Date.now() + Math.random().toString(36)}`;
+  return `Emp${Date.now() + Math.random().toString(36)}`;
 }
 
 // search in the sidebar
@@ -246,7 +253,6 @@ saveBtn.addEventListener('click', () => {
     phone: phoneVal,
     photoUrl: finalPhoto,
     experience: tempExperienceList,
-    currentLocation: "unsigned",
     inRoom: false
   };
 
@@ -286,12 +292,6 @@ employeeList.addEventListener('click', (event) => {
 });
 function displayEmployeeDetails(id) {
   const employee = Employees.find(emp => emp.id === id);
-
-  if (!employee) {
-    console.error("Employee not found!");
-    return;
-  }
-
   const experienceHtml = employee.experience.length > 0
     ? employee.experience.map(exp => `
         <li class="mb-2 border-b border-slate-600/30 pb-2 last:border-0">
@@ -410,16 +410,6 @@ function createEmployeeCard(emp, index) {
   `;
 }
 
-// Render Employee List 
-function renderEmployeeList(e = 'employeeList',) {
-  const container = document.getElementById(`${e}`);
-  container.innerHTML = '';
-
-  Employees.forEach((emp, index) => {
-    container.innerHTML += createEmployeeCard(emp, index);
-  });
-}
-
 
 // room limitiation
 
@@ -467,8 +457,10 @@ function roomLimitation(room) {
 
   const allowedPositions = accesslimitation[room];
   const employeesWithAccess = Employees.filter(emp =>
-    allowedPositions.includes(emp.position)
+    allowedPositions.includes(emp.position) && !emp.inRoom
   );
+
+
 
   renderEmployeeListInModal(employeesWithAccess, "roomModalContent");
 
@@ -498,7 +490,7 @@ function renderEmployeeListInModal(employeeArray, containerId) {
                     <h4 class="text-white font-semibold text-sm truncate capitalize">${emp.fullName}</h4>
                     <p class="text-green-400 text-[10px] truncate">Has Access (${emp.position})</p>
                 </div>
-                <button id="addToRoombtn" employee_id="${emp.id}" class="bottom-1 w-6 h-6 flex items-center justify-center bg-accent text-slateDeep rounded-md text-lg leading-none hover:bg-accent/80 transition">
+                <button id="${index}" employee_id="${emp.id}" class="addToRoombtn bottom-1 w-6 h-6 flex items-center justify-center bg-accent text-slateDeep rounded-md text-lg leading-none hover:bg-accent/80 transition">
                 +
                 </button>
             </div>
@@ -508,26 +500,32 @@ function renderEmployeeListInModal(employeeArray, containerId) {
   });
 }
 
+// rendering all the employees
+
 function renderEmployeeList(e = 'employeeList',) {
   const container = document.getElementById(`${e}`);
   container.innerHTML = '';
-
-  Employees.forEach((emp, index) => {
+  const newEmployees = Employees.filter((emp) => {
+    return !emp.inRoom;
+  });
+  newEmployees.forEach((emp, index) => {
     container.innerHTML += createEmployeeCard(emp, index);
   });
+
 }
 
 const roomBtnPlus = document.querySelectorAll(".roomBtnPlus");
-let roomName;
+
 roomBtnPlus.forEach(btn => {
   btn.addEventListener("click", (e) => {
-    roomName = e.target.parentElement.id;
+    const roomName = e.target.parentElement.id;
 
     roomModal.classList.remove("hidden");
     roomModal.classList.add("flex");
-
     roomLimitation(roomName);
-    addToRoom();
+
+    addToRoom(roomName);
+
   });
 });
 
@@ -541,15 +539,16 @@ if (closeRoomModalBtn) {
 
 // Add a Employee To a Room
 
-function addToRoom() {
-  const addToRoomBtn = document.querySelectorAll("#addToRoombtn");
+function addToRoom(roomName) {
+  const addToRoomBtn = document.querySelectorAll(".addToRoombtn");
   addToRoomBtn.forEach((btn) => {
     btn.addEventListener("click", (e) => {
       const cardId = e.target.parentElement.id;
       const filteredEmployeeForRoom = Employees.find(emp => emp.id === cardId);
       let roomID = document.getElementById(`${roomName}`);
-      
-      const roomCardEmployee = `
+
+      const roomCardEmployee = document.createElement("div");
+      roomCardEmployee.innerHTML = `
             <div id="${filteredEmployeeForRoom.id}" value="${filteredEmployeeForRoom.currentLocation}" class="employeesCard w-full rounded-2xl bg-slate-800/50 flex items-center p-2 shadow-lg border border-slate-700/50">
                 <div class="shrink-0 mr-2">
                     <img src="${filteredEmployeeForRoom.photoUrl}" alt="Profile" class="h-10 w-10 rounded-full object-cover border border-green-500/20">
@@ -558,20 +557,210 @@ function addToRoom() {
                     <h4 class="text-white font-semibold text-sm truncate capitalize">${filteredEmployeeForRoom.fullName}</h4>
                     <p class="text-green-400 text-[10px] truncate">${filteredEmployeeForRoom.position}</p>
                 </div>
-                <button id="addToRoombtn" employee_id="${filteredEmployeeForRoom.id}" class="bottom-1 w-6 h-6 flex items-center justify-center bg-accent text-slateDeep rounded-md text-lg leading-none hover:bg-accent/80 transition">
-                -
+                <button id="removeFromRoombtn" employee_id="${filteredEmployeeForRoom.id}" class="bottom-1 w-6 h-6 flex items-center justify-center bg-accent text-slateDeep rounded-md text-lg leading-none hover:bg-accent/80 transition">
+                x
                 </button>
             </div>
         `;
-      roomID.innerHTML += roomCardEmployee;
+      roomID.appendChild(roomCardEmployee);
+      filteredEmployeeForRoom.inRoom = true;
+      roomModal.classList.add("hidden");
+      roomModal.classList.remove("flex");
+      renderEmployeeList();
+      RemoveRoomBtnAndTitleServer();
+
+
     });
+
   });
 }
+
+// remove employee from room 
+
+document.addEventListener("click", (e) => {
+  if (e.target && e.target.id === "removeFromRoombtn") {
+    const id = e.target.parentElement.closest("[id]").id;
+    Employees.forEach((emp) => {
+      if (emp.id == id) {
+        emp.inRoom = false;
+        e.target.parentElement.parentElement.remove();
+        renderEmployeeList();
+      }
+    })
+  }
+
+});
+
+
+function RemoveRoomBtnAndTitleConference() {
+  const titleDiv = Conference.querySelector('div');
+  const numSpan = titleDiv.querySelector('span');
+
+  if (Conference.children.length >= 6) {
+    if (ConferenceBtn) {
+      ConferenceBtn.classList.add('hidden');
+      ConferenceBtn.classList.remove('flex');
+    }
+    if (titleDiv) titleDiv.classList.add('hidden');
+
+  }
+  if (Conference.children.length < 7) {
+    if (ConferenceBtn) {
+      ConferenceBtn.classList.remove('hidden');
+      ConferenceBtn.classList.add('flex');
+    }
+    if (titleDiv) titleDiv.classList.remove('hidden');
+  }
+
+}
+
+function RemoveRoomBtnAndTitleArchives() {
+  const titleDiv = Archives.querySelector('div');
+
+  if (Archives.children.length >= 4) {
+    if (ArchivesBtn) {
+      ArchivesBtn.classList.add('hidden');
+      ArchivesBtn.classList.remove('flex');
+    }
+    if (titleDiv) titleDiv.classList.add('hidden');
+
+  }
+  if (Archives.children.length < 4) {
+    if (ArchivesBtn) {
+      ArchivesBtn.classList.remove('hidden');
+      ArchivesBtn.classList.add('flex');
+    }
+    if (titleDiv) titleDiv.classList.remove('hidden');
+  }
+  if (Archives.children.length == 2) {
+    Archives.classList.add("bg-red-600/60");
+    Archives.classList.remove("bg-slateMid");
+  }
+  else if (Archives.children.length > 2) {
+    Archives.classList.remove("bg-red-600/60");
+    Archives.classList.add("bg-slateMid");
+  }
+}
+
+function RemoveRoomBtnAndTitleStaff() {
+  const titleDiv = Staff.querySelector('div');
+
+  if (Staff.children.length >= 6) {
+    if (StaffBtn) {
+      StaffBtn.classList.add('hidden');
+      StaffBtn.classList.remove('flex');
+    }
+    if (titleDiv) titleDiv.classList.add('hidden');
+
+  }
+  if (Staff.children.length < 6) {
+    if (StaffBtn) {
+      StaffBtn.classList.remove('hidden');
+      StaffBtn.classList.add('flex');
+    }
+    if (titleDiv) titleDiv.classList.remove('hidden');
+  }
+}
+
+function RemoveRoomBtnAndTitleReception() {
+  const titleDiv = Reception.querySelector('div');
+
+  if (Reception.children.length >= 3) {
+    if (ReceptionBtn) {
+      ReceptionBtn.classList.add('hidden');
+      ReceptionBtn.classList.remove('flex');
+    }
+    if (titleDiv) titleDiv.classList.add('hidden');
+
+  }
+  if (Reception.children.length < 3) {
+    if (ReceptionBtn) {
+      ReceptionBtn.classList.remove('hidden');
+      ReceptionBtn.classList.add('flex');
+    }
+    if (titleDiv) titleDiv.classList.remove('hidden');
+  }
+  if (Reception.children.length == 2) {
+    Reception.classList.add("bg-red-600/60");
+    Reception.classList.remove("bg-slateMid");
+  }
+  else if (Reception.children.length > 2) {
+    Reception.classList.remove("bg-red-600/60");
+    Reception.classList.add("bg-slateMid");
+  }
+}
+
+function RemoveRoomBtnAndTitleSecurity() {
+  const titleDiv = Security.querySelector('div');
+
+  if (Security.children.length >= 3) {
+
+    if (SecurityBtn) {
+      SecurityBtn.classList.add('hidden');
+      SecurityBtn.classList.remove('flex');
+    }
+    if (titleDiv) titleDiv.classList.add('hidden');
+
+  } if (Security.children.length < 3) {
+    if (SecurityBtn) {
+      SecurityBtn.classList.remove('hidden');
+      SecurityBtn.classList.add('flex');
+    }
+    if (titleDiv) titleDiv.classList.remove('hidden');
+  }
+  if (Security.children.length == 2) {
+    Security.classList.add("bg-red-600/60");
+    Security.classList.remove("bg-slateMid");
+  }
+  else if (Security.children.length > 2) {
+    Security.classList.remove("bg-red-600/60");
+    Security.classList.add("bg-slateMid");
+  }
+}
+
+function RemoveRoomBtnAndTitleServer() {
+  const titleDiv = Server.querySelector('div');
+  if (Server.children.length >= 3) {
+
+    if (ServerBtn) {
+      ServerBtn.classList.add('hidden');
+      ServerBtn.classList.remove('flex');
+    }
+    if (titleDiv) titleDiv.classList.add('hidden');
+
+  }
+  if (Server.children.length < 3) {
+    if (ServerBtn) {
+      ServerBtn.classList.remove('hidden');
+      ServerBtn.classList.add('flex');
+
+    }
+    if (titleDiv) titleDiv.classList.remove('hidden');
+  }
+  if (Server.children.length == 2) {
+    Server.classList.add("bg-red-600/60");
+    Server.classList.remove("bg-slateMid");
+  }
+  else if (Server.children.length > 2) {
+    Server.classList.remove("bg-red-600/60");
+    Server.classList.add("bg-slateMid");
+  }
+}
+
+
+setInterval(() => {
+  RemoveRoomBtnAndTitleConference()
+  RemoveRoomBtnAndTitleArchives();
+  RemoveRoomBtnAndTitleStaff();
+  RemoveRoomBtnAndTitleReception();
+  RemoveRoomBtnAndTitleServer();
+  RemoveRoomBtnAndTitleSecurity();
+}, 100);
+
 
 
 function appExe() {
   renderEmployeeList();
-  // renderEmployeeListInRooms();
-
 }
 appExe();
+
